@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">Itineris</string>
-    <string name="title_map">Plan</string>
-    <string name="title_camera">Navigation</string>
-    <string name="title_settings">Réglages</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-</resources>
