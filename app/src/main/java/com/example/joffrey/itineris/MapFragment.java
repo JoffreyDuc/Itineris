@@ -16,7 +16,6 @@ public class MapFragment extends Fragment {
     private ImageView iv_canvas;
     private Canvas canvas;
     private Paint paint;
-    private Bitmap baseBitmap;
 
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
@@ -25,27 +24,21 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        /*
-        http://joerg-richter.fuyosoft.com/?p=120
-        https://www.programering.com/a/MTO4gDMwATU.html
-         */
         super.onCreate(savedInstanceState);
-
-        paint = new Paint();
-        paint.setStrokeWidth(5);
-        paint.setColor(Color.RED);
-
-        if (baseBitmap == null) {
-            /*baseBitmap = Bitmap.createBitmap(iv_canvas.getWidth(), iv_canvas.getHeight(), Bitmap.Config.ARGB_8888);
-            canvas = new Canvas(baseBitmap);
-            canvas.drawColor(Color.WHITE);*/
-        }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_map, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+        View v = new PositionCanvas(getActivity().getApplicationContext());
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888); //width, height,..
+        Canvas canvas = new Canvas(bitmap);
+        v.draw(canvas);
+        ImageView iv = (ImageView) rootView.findViewById(R.id.ivCanvas);
+        iv.setImageBitmap(bitmap);
+
+        return rootView;
     }
 
 }
