@@ -5,10 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".MapFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="fragment plan" />
+
+    <ImageView
+        android:id="@+id/ivPlanUsmb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/plan_usmb" />
 
 </FrameLayout>
