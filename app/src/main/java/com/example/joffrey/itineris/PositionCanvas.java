@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
 
+import java.util.Timer;
+
 public class PositionCanvas extends View {
     public PositionCanvas(Context context) {
         super(context);
@@ -14,9 +16,15 @@ public class PositionCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        //canvas.drawRect(150, 150, 200, 300, paint);
-        canvas.drawCircle(250, 250, 10, paint);
+        Timer timer = new Timer();
+        timer.schedule(new PointDrawer(canvas), 0, 1000);
+        /*while(true){
+            try {
+                redrawPoint(canvas);
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }*/
     }
 }
