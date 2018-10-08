@@ -1,6 +1,7 @@
 package com.example.joffrey.itineris;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
@@ -91,6 +92,7 @@ public class PointDrawer extends TimerTask implements LocationListener {
             Log.d("E","============================================== Erreur permission");
             return null;
         }
+        Log.d("E","============================================== Bonnes permissions");
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
 
         Location location = new Location("");
@@ -99,5 +101,11 @@ public class PointDrawer extends TimerTask implements LocationListener {
 
         return location;
         //return null;
+    }
+
+    public boolean checkLocationPermission(){
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        int res = this.context.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 }
