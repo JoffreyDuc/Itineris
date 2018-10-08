@@ -17,7 +17,7 @@ public class PositionCanvas extends View {
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
         Timer timer = new Timer();
-        timer.schedule(new PointDrawer(canvas), 0, 1000);
+        timer.schedule(new PointDrawer(canvas, getContext()), 0, 1000);
         /*while(true){
             try {
                 redrawPoint(canvas);
