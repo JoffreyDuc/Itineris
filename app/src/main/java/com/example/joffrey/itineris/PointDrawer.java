@@ -1,27 +1,21 @@
 package com.example.joffrey.itineris;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-
-import java.util.List;
 import java.util.TimerTask;
 
-import static android.content.Context.LOCATION_SERVICE;
-
-public class PointDrawer extends TimerTask implements LocationListener {
-    Canvas canvas;
-    Context context;
+public class PointDrawer extends TimerTask {
+    private Canvas canvas;
+    private Context context;
+    private Point2D point2D;
 
     LocationManager mLocationManager;
 
@@ -32,9 +26,10 @@ public class PointDrawer extends TimerTask implements LocationListener {
     double height = 500.0;
     double width = 500.0;
 
-    public PointDrawer(Canvas canvas, Context context) {
+    public PointDrawer(Canvas canvas, Context context, Point2D point2D) {
         this.canvas = canvas;
         this.context = context;
+        this.point2D = point2D;
     }
 
     @Override
@@ -47,9 +42,11 @@ public class PointDrawer extends TimerTask implements LocationListener {
         Paint paint = new Paint();
         paint.setColor(Color.RED);
 
-        Point2D p = gpsToMap(getCoordinates());
+        canvas.drawCircle((float) point2D.getX(), (float) ((float) 500.0 - point2D.getY()), 7, paint);
 
-        canvas.drawCircle((float) p.getX(), (float) ((float) 500.0 - p.getY()), 7, paint);
+        /*Point2D p = gpsToMap(getCoordinates());
+
+        canvas.drawCircle((float) p.getX(), (float) ((float) 500.0 - p.getY()), 7, paint);*/
     }
 
     private Point2D gpsToMap(Point2D gpsPoint) {
@@ -60,47 +57,29 @@ public class PointDrawer extends TimerTask implements LocationListener {
         return new Point2D(x, y);
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
-
     private Point2D getCoordinates() {
         Location location = getLocation();
-        //return new Point2D(location.getLongitude(), location.getLatitude());
-        return new Point2D(this.longitudeMapLeft, this.latitudeMapBottom);
+        Log.d("D", location.getLatitude() + ", " + location.getLongitude());
+        return new Point2D(location.getLongitude(), location.getLatitude());
+        //return new Point2D(this.longitudeMapLeft, this.latitudeMapBottom);
     }
 
     public Location getLocation() {
-        LocationManager locationManager = (LocationManager) this.context.getSystemService(LOCATION_SERVICE);
+
         if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.d("E","============================================== Erreur permission");
             return null;
         }
         Log.d("E","============================================== Bonnes permissions");
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
 
-        Location location = new Location("");
-        //lng = location.getLongitude();
-        //lat = location.getLatitude();
+        /*locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+        Location location = new Location("");*/
 
-        return location;
-        //return null;
+        /*LocationManager locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
+        if(locationManager != null) locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(), false));
+*/
+        return null;
     }
 
     public boolean checkLocationPermission(){
