@@ -3,4 +3,5 @@
     <string name="title_map">Plan</string>
     <string name="title_camera">Navigation</string>
     <string name="title_settings">Paramètres</string>
+    <string name="plane_finding">Searching for surfaces&#8230;</string>
 </resources>

@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".NavigationFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="fragment Navigation" />
+    <com.google.ar.sceneform.ArSceneView
+        android:id="@+id/ar_scene_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="top"/>
 
 </FrameLayout>
