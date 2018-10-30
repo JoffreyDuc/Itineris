@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:alpha="0.93"
-    android:background="#e81109"
+    android:alpha="0.9"
+    android:background="@color/batiment12a_background"
     android:orientation="vertical"
     android:padding="30dp">
 
@@ -11,7 +11,7 @@
         android:id="@+id/tvNom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bâtiment 12A - Maurienne"
+        android:text="@string/batiment12a_nom"
         android:textColor="#fff" />
 
     <TextView
@@ -19,5 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#fff"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textAlignment="center" />
 </LinearLayout>

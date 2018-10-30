@@ -1,5 +1,6 @@
 package com.example.joffrey.itineris;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,9 +9,9 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,6 @@ import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.core.exceptions.UnavailableException;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.util.concurrent.CompletableFuture;
@@ -45,7 +45,7 @@ public class NavigationFragment extends Fragment {
     // Renderables
     private ViewRenderable batiment12aLayoutRenderable;
 
-    // Our ARCore-Location scene
+    // ARCore-Location scene
     private LocationScene locationScene;
 
 
@@ -107,28 +107,24 @@ public class NavigationFragment extends Fragment {
                             }
 
                             if (locationScene == null) {
-                                // If our locationScene object hasn't been setup yet, this is a good time to do it
-                                // We know that here, the AR components have been initiated.
                                 locationScene = new LocationScene(getContext(), getActivity(), arSceneView);
 
-                                // Now lets create our location markers.
-                                // First, a layout
                                 LocationMarker layoutLocationMarker = new LocationMarker(
                                         5.869404,
                                         45.640864,
                                         getBatiment12aView()
                                 );
 
-                                // An example "onRender" event, called every frame
-                                // Updates the layout with the markers distance
+                                // render event is called every frame
                                 layoutLocationMarker.setRenderEvent(new LocationNodeRender() {
                                     @Override
                                     public void render(LocationNode node) {
                                         View eView = batiment12aLayoutRenderable.getView();
                                         TextView distanceTextView = eView.findViewById(R.id.tvDistance);
-                                        distanceTextView.setText(node.getDistance() + "M");
+                                        distanceTextView.setText(node.getDistance() + " m");
                                     }
                                 });
+
                                 // Adding the marker
                                 locationScene.mLocationMarkers.add(layoutLocationMarker);
                             }
@@ -162,10 +158,11 @@ public class NavigationFragment extends Fragment {
     }
 
     /**
-     * Example node of a layout
+     * Node of batiment12a layout
      *
      * @return
      */
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Node getBatiment12aView() {
         Node base = new Node();
@@ -173,9 +170,9 @@ public class NavigationFragment extends Fragment {
         Context c = getContext();
         // Add  listeners etc here
         View eView = batiment12aLayoutRenderable.getView();
-        eView.setOnTouchListener((v, event) -> {
+        eView.setOnTouchListener((View v, MotionEvent event) -> {
             Toast.makeText(
-                    c, "Location marker touched.", Toast.LENGTH_LONG)
+                    c, "Bâtiment 12A.", Toast.LENGTH_LONG)
                     .show();
             return false;
         });
@@ -213,7 +210,7 @@ public class NavigationFragment extends Fragment {
         try {
             arSceneView.resume();
         } catch (CameraNotAvailableException ex) {
-            NavigationUtils.displayError(getContext(), "Unable to get camera", ex);
+            NavigationUtils.displayError(getContext(), "Impossible d'utiliser la caméra", ex);
             getActivity().finish();
             return;
         }
@@ -252,7 +249,7 @@ public class NavigationFragment extends Fragment {
                 ARLocationPermissionHelper.launchPermissionSettings(getActivity());
             } else {
                 Toast.makeText(
-                        getContext(), "Camera permission is needed to run this application", Toast.LENGTH_LONG)
+                        getContext(), "La permission de la caméra est nécessaire pour exécuter cette application", Toast.LENGTH_LONG)
                         .show();
             }
             getActivity().finish();
@@ -268,7 +265,7 @@ public class NavigationFragment extends Fragment {
                 Snackbar.make(
                         getActivity().findViewById(android.R.id.content),
                         R.string.plane_finding,
-                        Snackbar.LENGTH_INDEFINITE);
+                        Snackbar.LENGTH_LONG);
         loadingMessageSnackbar.getView().setBackgroundColor(0xbf323232);
         loadingMessageSnackbar.show();
     }

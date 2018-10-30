@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Itineris</string>
+
     <string name="title_map">Plan</string>
     <string name="title_camera">Navigation</string>
     <string name="title_settings">Paramètres</string>
+
     <string name="plane_finding">Searching for surfaces&#8230;</string>
+    <string name="batiment12a_nom">Bâtiment 12A - Maurienne</string>
 </resources>
