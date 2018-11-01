@@ -4,5 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="batiment12a_background">#09bfe8</color>
+    <!-- batiment*_layout.xml -->
+    <color name="batimentsNom">#fff</color>
+    <color name="batimentsDistance">#fff</color>
+        <!-- Bâtiment 12A -->
+        <color name="batiment12a_background">#09bfe8</color>
 </resources>

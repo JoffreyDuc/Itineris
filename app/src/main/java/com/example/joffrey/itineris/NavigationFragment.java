@@ -121,7 +121,7 @@ public class NavigationFragment extends Fragment {
                                     public void render(LocationNode node) {
                                         View eView = batiment12aLayoutRenderable.getView();
                                         TextView distanceTextView = eView.findViewById(R.id.tvDistance);
-                                        distanceTextView.setText(node.getDistance() + " m");
+                                        distanceTextView.setText("à " + node.getDistance() + " m");
                                     }
                                 });
 

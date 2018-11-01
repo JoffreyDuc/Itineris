@@ -2,4 +2,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- batiment*_layout.xml -->
+    <dimen name="batimentsNom">22sp</dimen>
+    <dimen name="batimentsPadding">30dp</dimen>
+    <dimen name="batimentsAlpha">0.85</dimen>
+    <dimen name="batimentsDistance">22sp</dimen>
 </resources>

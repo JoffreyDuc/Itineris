@@ -33,15 +33,6 @@ import java.util.ArrayList;
 // Inspired by https://medium.com/@ssaurel/getting-gps-location-on-android-with-fused-location-provider-api-1001eb549089
 
 public class MapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private ImageView iv_canvas;
-    private Canvas canvas;
-    private Paint paint;
-    double latitudeMapTop = 45.643159;
-    double latitudeMapBottom = 45.637620;
-    double longitudeMapLeft = 5.862951;
-    double longitudeMapRight = 5.875756;
-    double height = 500.0;
-    double width = 500.0;
 
     private Location location;
     private GoogleApiClient googleApiClient;
@@ -67,33 +58,23 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
-        View v = new PositionCanvas(getActivity().getApplicationContext(), 250 ,250);
-        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888); //width, height,..
-        Canvas canvas = new Canvas(bitmap);
-        v.draw(canvas);
-
-        ImageView iv = (ImageView) rootView.findViewById(R.id.ivCanvas);
-        iv.setImageBitmap(bitmap);
-
-        // we add permissions we need to request location of the users
+        // On ajoute les permissions qui permettent de récupérer la localisation de l'utilisateur
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
         permissionsToRequest = permissionsToRequest(permissions);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (permissionsToRequest.size() > 0) {
-                requestPermissions(permissionsToRequest.toArray(
-                        new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
-            }
+        if (permissionsToRequest.size() > 0) {
+            requestPermissions(permissionsToRequest.toArray(
+                    new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
         }
 
-        // we build google api client
+        // On crée une instance de l'API Google qui gère la localisation
         googleApiClient = new GoogleApiClient.Builder(getContext()).
                 addApi(LocationServices.API).
                 addConnectionCallbacks(this).
@@ -115,11 +96,8 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     }
 
     private boolean hasPermission(String permission) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return getActivity().checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
-        }
+        return getActivity().checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
 
-        return true;
     }
 
     @Override
@@ -181,6 +159,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (location != null) {
+            drawCanvas();
             Log.d("d", "LOCATION IS : " + location.getLatitude() + ", " + location.getLongitude());
         }
 
@@ -197,7 +176,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 &&  ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getContext(), "You need to enable permissions to display location !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Vous devez autoriser la permission pour utiliser la localisation", Toast.LENGTH_SHORT).show();
         }
 
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
@@ -216,6 +195,8 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
+            this.location = location;
+            drawCanvas();
             Log.d("d", "LOCATION CHANGED TO : " + location.getLatitude() + ", " + location.getLongitude());
         }
     }
@@ -231,22 +212,18 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 }
 
                 if (permissionsRejected.size() > 0) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
-                            new AlertDialog.Builder(getContext()).
-                                    setMessage("Ces autorisations sont nécessaires pour l'utilisation de votre position. Merci de les autoriser.").
-                                    setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                requestPermissions(permissionsRejected.
-                                                        toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);
-                                            }
-                                        }
-                                    }).setNegativeButton("Cancel", null).create().show();
+                    if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
+                        new AlertDialog.Builder(getContext()).
+                                setMessage("Ces autorisations sont nécessaires pour l'utilisation de votre position. Merci de les autoriser.").
+                                setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        requestPermissions(permissionsRejected.
+                                                toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);
+                                    }
+                                }).setNegativeButton("Cancel", null).create().show();
 
-                            return;
-                        }
+                        return;
                     }
                 } else {
                     if (googleApiClient != null) {
@@ -257,32 +234,17 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 break;
         }
     }
+
+    private void drawCanvas(){
+        // On crée le canvas qui sera par-dessus le plan
+        View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(location.getLatitude(), location.getLongitude()));
+        //View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(45.640866, 5.869415));
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888); //width, height,..
+        Canvas canvas = new Canvas(bitmap);
+        v.draw(canvas);
+
+        // On affiche notre canvas
+        ImageView iv = (ImageView) getView().findViewById(R.id.ivCanvas);
+        iv.setImageBitmap(bitmap);
+    }
 }
-
-/* pour dessiner :
-    Point2D p = gpsToMap(getCoordinates());
-
-    canvas.drawCircle((float) p.getX(), (float) ((float) 500.0 - p.getY()), 7, paint);
-
-méthodes utiles :
-    private Point2D gpsToMap(Point2D gpsPoint) {
-
-        double x = (gpsPoint.getX() - this.longitudeMapLeft) / (this.longitudeMapRight - this.longitudeMapLeft) * this.height;
-        double y = (gpsPoint.getY() - this.latitudeMapBottom) / (this.latitudeMapTop - this.latitudeMapBottom) * this.width;
-
-        return new Point2D(x, y);
-    }
-
-    private Point2D getCoordinates() {
-        Location location = getLocation();
-        Log.d("D", location.getLatitude() + ", " + location.getLongitude());
-        return new Point2D(location.getLongitude(), location.getLatitude());
-        //return new Point2D(this.longitudeMapLeft, this.latitudeMapBottom);
-    }
-
-    public boolean checkLocationPermission(){
-        String permission = "android.permission.ACCESS_FINE_LOCATION";
-        int res = this.context.checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
-    }
- */
