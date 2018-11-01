@@ -49,8 +49,10 @@ public class PositionCanvas extends View {
                 break;
         }
 
-        // On traduit un point de coordonnées GPS à un point de coordonnées orthonormée
+        // On traduit un point de coordonnées GPS à un point de coordonnées dans un repère orthonormé
         Point2D locationOnMap = Point2D.translatePoint2D(point, P_HG, P_BD, P_MAX);
+
+        // Et on le dessine
         canvas.drawCircle((float) locationOnMap.getX(), (float) locationOnMap.getY(), 8, paint);
     }
 
