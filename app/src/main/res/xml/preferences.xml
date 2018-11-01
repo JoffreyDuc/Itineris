@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <android.support.v7.preference.ListPreference
+        android:key="color"
+        android:title="Couleur du point"
+        android:summary="Définissez la couleur du point de votre localisation sur le plan"
+        android:defaultValue="red"
+        android:entries="@array/color"
+        android:entryValues="@array/colorValues"
+        app:iconSpaceReserved="false" />
+
+
+</android.support.v7.preference.PreferenceScreen>

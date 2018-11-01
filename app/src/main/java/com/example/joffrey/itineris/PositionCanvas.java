@@ -1,9 +1,11 @@
 package com.example.joffrey.itineris;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v7.preference.PreferenceManager;
 import android.view.View;
 
 public class PositionCanvas extends View {
@@ -26,9 +28,30 @@ public class PositionCanvas extends View {
 
         // Dessine le point de la position actuelle
         Paint paint = new Paint();
-        paint.setColor(Color.RED);
+
+        // On récupère la couleur choisie dans les paramètres
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        switch (sharedPrefs.getString("color", "RED")){
+            case "RED":
+                paint.setColor(Color.RED);
+                break;
+            case "BLUE":
+                paint.setColor(Color.BLUE);
+                break;
+            case "YELLOW":
+                paint.setColor(Color.YELLOW);
+                break;
+            case "GREEN":
+                paint.setColor(Color.GREEN);
+                break;
+            default:
+                paint.setColor(Color.RED);
+                break;
+        }
+
+        // On traduit un point de coordonnées GPS à un point de coordonnées orthonormée
         Point2D locationOnMap = Point2D.translatePoint2D(point, P_HG, P_BD, P_MAX);
-        canvas.drawCircle((float) locationOnMap.getX(), (float) locationOnMap.getY(), 10, paint);
+        canvas.drawCircle((float) locationOnMap.getX(), (float) locationOnMap.getY(), 8, paint);
     }
 
 }
