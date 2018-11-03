@@ -9,11 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+        </android.support.v7.widget.SearchView>
+
+        <ListView
+            android:id="@+id/lvSearch"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/search" />
+
         <ImageView
             android:id="@+id/ivPlanUsmb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/plan_usmb" />
+            android:src="@drawable/plan_usmb"
+            android:contentDescription="@string/ivPlanDescription" />
 
         <ImageView
             android:id="@+id/ivCanvas"
@@ -21,8 +37,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/ivPlanUsmb"
             android:layout_alignBottom="@id/ivPlanUsmb"
-            android:layout_alignLeft="@id/ivPlanUsmb"
-            android:layout_alignRight="@id/ivPlanUsmb" />
+            android:layout_alignStart="@id/ivPlanUsmb"
+            android:layout_alignEnd="@id/ivPlanUsmb"
+            android:contentDescription="@string/ivCanvasDescription" />
 
     </RelativeLayout>
 

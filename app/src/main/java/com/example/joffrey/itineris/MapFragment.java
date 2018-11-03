@@ -12,11 +12,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,19 +32,26 @@ import java.util.ArrayList;
 
 // Inspired by https://medium.com/@ssaurel/getting-gps-location-on-android-with-fused-location-provider-api-1001eb549089
 
-public class MapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, SearchView.OnQueryTextListener {
 
     private Location location;
     private GoogleApiClient googleApiClient;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private LocationRequest locationRequest;
     private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
+    private ImageView imageView;
+    private View canvas;
     // lists for permissions
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
     // integer for permissions results request
     private static final int ALL_PERMISSIONS_RESULT = 1011;
+    // Recherche
+    private ListView list;
+    private ListViewAdapter adapter;
+    private SearchView searchView;
+    private ArrayList<Batiment> arraylist = new ArrayList<Batiment>();
 
 
     public static MapFragment newInstance() {
@@ -77,6 +86,46 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 addApi(LocationServices.API).
                 addConnectionCallbacks(this).
                 addOnConnectionFailedListener(this).build();
+
+        // Tout ce qui est relatif pour la barre de recherche
+        // Dans l'idée on récupère ici les bâtiments depuis un JSON distant
+        arraylist.add(new Batiment("12A", 45.640864, 5.869404));
+        arraylist.add(new Batiment("12B", 45.640900, 5.869431));
+        arraylist.add(new Batiment("4C", 45.640411, 5.870449));
+
+        // Locate the ListView in listview_main.xml
+        list = rootView.findViewById(R.id.lvSearch);
+        list.setVisibility(View.INVISIBLE);
+
+        // Pass results to ListViewAdapter Class
+        adapter = new ListViewAdapter(getContext(), arraylist);
+
+        // Binds the Adapter to the ListView
+        list.setAdapter(adapter);
+
+        // Locate the EditText in listview_main.xml
+        searchView = rootView.findViewById(R.id.search);
+        imageView = rootView.findViewById(R.id.ivPlanUsmb);
+        canvas = rootView.findViewById(R.id.ivCanvas);
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageView.setVisibility(View.INVISIBLE);
+                canvas.setVisibility(View.INVISIBLE);
+                list.setVisibility(View.VISIBLE);
+            }
+        });
+        // Detect SearchView close
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                imageView.setVisibility(View.VISIBLE);
+                canvas.setVisibility(View.VISIBLE);
+                list.setVisibility(View.INVISIBLE);
+                return false;
+            }
+        });
+        searchView.setOnQueryTextListener(this);
 
         return rootView;
     }
@@ -244,5 +293,19 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         // On affiche notre canvas
         ImageView iv = (ImageView) getView().findViewById(R.id.ivCanvas);
         iv.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        Log.d("d", "Query text submit : " + s);
+        // Afficher un point sur le batiment sélectionné TODO: faire un getBatiment(String s) dans class Batiment + gérer le click sur un item
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        Log.d("d", "Query text change (then filter) : " + s);
+        adapter.filter(s);
+        return false;
     }
 }

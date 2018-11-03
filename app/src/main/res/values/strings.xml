@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">Itineris</string>
 
+    <!-- Bottom bar -->
     <string name="title_map">Plan</string>
     <string name="title_camera">Navigation</string>
     <string name="title_settings">Paramètres</string>
 
+    <!-- Fragment Plan -->
+    <string name="ivPlanDescription">Plan du campus de l\'usmb</string>
+    <string name="ivCanvasDescription">Canvas de la taille du plan du campus qui contiendra le point de localisation de l\'utilisateur</string>
+
+    <!-- Fragment Navigation -->
     <string name="plane_finding">Searching for surfaces&#8230;</string>
     <string name="batiment12a_nom">Bâtiment 12A - Maurienne</string>
 </resources>
