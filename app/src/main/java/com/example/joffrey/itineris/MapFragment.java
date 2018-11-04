@@ -394,11 +394,13 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
             imageView.setVisibility(View.INVISIBLE);
             canvas.setVisibility(View.INVISIBLE);
             canvasBatiment.setVisibility(View.INVISIBLE);
+            btnClearCanvasBatiment.setVisibility(View.INVISIBLE);
             list.setVisibility(View.VISIBLE);
         }else{
             imageView.setVisibility(View.VISIBLE);
             canvas.setVisibility(View.VISIBLE);
             canvasBatiment.setVisibility(View.VISIBLE);
+            btnClearCanvasBatiment.setVisibility(View.VISIBLE);
             list.setVisibility(View.INVISIBLE);
             searchView.clearFocus();
         }

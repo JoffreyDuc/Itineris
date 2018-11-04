@@ -44,6 +44,8 @@ public class NavigationFragment extends Fragment {
 
     // Renderables
     private ViewRenderable batiment12aLayoutRenderable;
+    private ViewRenderable batiment12bLayoutRenderable;
+    private ViewRenderable batiment4cLayoutRenderable;
 
     // ARCore-Location scene
     private LocationScene locationScene;
@@ -67,13 +69,14 @@ public class NavigationFragment extends Fragment {
         arSceneView = rootView.findViewById(R.id.ar_scene_view);
 
         // Build a renderable from a 2D View.
-        CompletableFuture<ViewRenderable> batiment12aLayout =
-                ViewRenderable.builder()
-                        .setView(getContext(), R.layout.batiment12a_layout)
-                        .build();
+        CompletableFuture<ViewRenderable> batiment12aLayout = ViewRenderable.builder().setView(getContext(), R.layout.batiment12a_layout).build();
+        CompletableFuture<ViewRenderable> batiment12bLayout = ViewRenderable.builder().setView(getContext(), R.layout.batiment12b_layout).build();
+        CompletableFuture<ViewRenderable> batiment4cLayout = ViewRenderable.builder().setView(getContext(), R.layout.batiment4c_layout).build();
 
         CompletableFuture.allOf(
-                batiment12aLayout)
+                batiment12aLayout,
+                batiment12bLayout,
+                batiment4cLayout)
                 .handle(
                         (notUsed, throwable) -> {
                             // When you build a Renderable, Sceneform loads its resources in the background while
@@ -87,6 +90,8 @@ public class NavigationFragment extends Fragment {
 
                             try {
                                 batiment12aLayoutRenderable = batiment12aLayout.get();
+                                batiment12bLayoutRenderable = batiment12bLayout.get();
+                                batiment4cLayoutRenderable = batiment4cLayout.get();
                                 hasFinishedLoading = true;
 
                             } catch (InterruptedException | ExecutionException ex) {
@@ -109,14 +114,22 @@ public class NavigationFragment extends Fragment {
                             if (locationScene == null) {
                                 locationScene = new LocationScene(getContext(), getActivity(), arSceneView);
 
-                                LocationMarker layoutLocationMarker = new LocationMarker(
+                                LocationMarker layoutLocationMarker12a = new LocationMarker(
                                         5.869404,
                                         45.640864,
                                         getBatiment12aView()
+                                );LocationMarker layoutLocationMarker12b = new LocationMarker(
+                                        5.869291,
+                                        45.641194,
+                                        getBatiment12bView()
+                                );LocationMarker layoutLocationMarker4c = new LocationMarker(
+                                        5.870449,
+                                        45.640411,
+                                        getBatiment4cView()
                                 );
 
                                 // render event is called every frame
-                                layoutLocationMarker.setRenderEvent(new LocationNodeRender() {
+                                layoutLocationMarker12a.setRenderEvent(new LocationNodeRender() {
                                     @Override
                                     public void render(LocationNode node) {
                                         View eView = batiment12aLayoutRenderable.getView();
@@ -124,9 +137,27 @@ public class NavigationFragment extends Fragment {
                                         distanceTextView.setText("à " + node.getDistance() + " m");
                                     }
                                 });
+                                layoutLocationMarker12b.setRenderEvent(new LocationNodeRender() {
+                                    @Override
+                                    public void render(LocationNode node) {
+                                        View eView = batiment12bLayoutRenderable.getView();
+                                        TextView distanceTextView = eView.findViewById(R.id.tvDistance);
+                                        distanceTextView.setText("à " + node.getDistance() + " m");
+                                    }
+                                });
+                                layoutLocationMarker4c.setRenderEvent(new LocationNodeRender() {
+                                    @Override
+                                    public void render(LocationNode node) {
+                                        View eView = batiment4cLayoutRenderable.getView();
+                                        TextView distanceTextView = eView.findViewById(R.id.tvDistance);
+                                        distanceTextView.setText("à " + node.getDistance() + " m");
+                                    }
+                                });
 
                                 // Adding the marker
-                                locationScene.mLocationMarkers.add(layoutLocationMarker);
+                                locationScene.mLocationMarkers.add(layoutLocationMarker12a);
+                                locationScene.mLocationMarkers.add(layoutLocationMarker12b);
+                                locationScene.mLocationMarkers.add(layoutLocationMarker4c);
                             }
 
                             Frame frame = arSceneView.getArFrame();
@@ -173,6 +204,39 @@ public class NavigationFragment extends Fragment {
         eView.setOnTouchListener((View v, MotionEvent event) -> {
             Toast.makeText(
                     c, "Bâtiment 12A.", Toast.LENGTH_LONG)
+                    .show();
+            return false;
+        });
+
+        return base;
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private Node getBatiment12bView() {
+        Node base = new Node();
+        base.setRenderable(batiment12bLayoutRenderable);
+        Context c = getContext();
+        // Add  listeners etc here
+        View eView = batiment12bLayoutRenderable.getView();
+        eView.setOnTouchListener((View v, MotionEvent event) -> {
+            Toast.makeText(
+                    c, "Bâtiment 12B.", Toast.LENGTH_LONG)
+                    .show();
+            return false;
+        });
+
+        return base;
+    }@SuppressLint("ClickableViewAccessibility")
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private Node getBatiment4cView() {
+        Node base = new Node();
+        base.setRenderable(batiment4cLayoutRenderable);
+        Context c = getContext();
+        // Add  listeners etc here
+        View eView = batiment4cLayoutRenderable.getView();
+        eView.setOnTouchListener((View v, MotionEvent event) -> {
+            Toast.makeText(
+                    c, "Bâtiment 4C.", Toast.LENGTH_LONG)
                     .show();
             return false;
         });
