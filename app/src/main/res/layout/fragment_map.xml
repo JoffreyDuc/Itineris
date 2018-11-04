@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MapFragment">
 
     <RelativeLayout
@@ -14,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            app:defaultQueryHint="Rechercher un bâtiment">
         </android.support.v7.widget.SearchView>
 
         <ListView
@@ -40,6 +42,16 @@
             android:layout_alignStart="@id/ivPlanUsmb"
             android:layout_alignEnd="@id/ivPlanUsmb"
             android:contentDescription="@string/ivCanvasDescription" />
+
+        <ImageView
+            android:id="@+id/ivCanvasBat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/ivPlanUsmb"
+            android:layout_alignBottom="@id/ivPlanUsmb"
+            android:layout_alignStart="@id/ivPlanUsmb"
+            android:layout_alignEnd="@id/ivPlanUsmb"
+            android:contentDescription="@string/ivCanvasBatDescription" />
 
     </RelativeLayout>
 

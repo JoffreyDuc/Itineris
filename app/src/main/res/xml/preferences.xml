@@ -5,12 +5,21 @@
 
 
     <android.support.v7.preference.ListPreference
-        android:key="color"
-        android:title="Couleur du point"
+        android:key="colorUser"
+        android:title="Point de l'utilisateur"
         android:summary="Définissez la couleur du point de votre localisation sur le plan"
         android:defaultValue="red"
-        android:entries="@array/color"
-        android:entryValues="@array/colorValues"
+        android:entries="@array/colorUser"
+        android:entryValues="@array/colorUserValues"
+        app:iconSpaceReserved="false" />
+
+    <android.support.v7.preference.ListPreference
+        android:key="colorBatiment"
+        android:title="Point du bâtiment"
+        android:summary="Définissez la couleur du point des bâtiments recherchés sur le plan"
+        android:defaultValue="blue"
+        android:entries="@array/colorBatiment"
+        android:entryValues="@array/colorBatimentValues"
         app:iconSpaceReserved="false" />
 
 

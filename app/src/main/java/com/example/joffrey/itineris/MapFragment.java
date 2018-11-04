@@ -21,6 +21,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,7 +34,14 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 // Inspired by https://medium.com/@ssaurel/getting-gps-location-on-android-with-fused-location-provider-api-1001eb549089
 
@@ -41,6 +54,8 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
     private ImageView imageView;
     private View canvas;
+    private View canvasBatiment;
+    private RequestQueue queue;
     // lists for permissions
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
@@ -51,7 +66,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     private ListView list;
     private ListViewAdapter adapter;
     private SearchView searchView;
-    private ArrayList<Batiment> arraylist = new ArrayList<Batiment>();
+    private ArrayList<Batiment> arraylist = new ArrayList<>();
 
 
     public static MapFragment newInstance() {
@@ -87,45 +102,42 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 addConnectionCallbacks(this).
                 addOnConnectionFailedListener(this).build();
 
+        // Création de l'instance d'une RequestQueue
+        queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
+
         // Tout ce qui est relatif pour la barre de recherche
         // Dans l'idée on récupère ici les bâtiments depuis un JSON distant
-        arraylist.add(new Batiment("12A", 45.640864, 5.869404));
+        /*arraylist.add(new Batiment("12A", 45.640864, 5.869404));
         arraylist.add(new Batiment("12B", 45.640900, 5.869431));
-        arraylist.add(new Batiment("4C", 45.640411, 5.870449));
+        arraylist.add(new Batiment("4C", 45.640411, 5.870449));*/
+        getBatimentsFromJson();
 
-        // Locate the ListView in listview_main.xml
-        list = rootView.findViewById(R.id.lvSearch);
-        list.setVisibility(View.INVISIBLE);
-
-        // Pass results to ListViewAdapter Class
-        adapter = new ListViewAdapter(getContext(), arraylist);
-
-        // Binds the Adapter to the ListView
-        list.setAdapter(adapter);
-
-        // Locate the EditText in listview_main.xml
+        // Locate the Views in listview_main.xml
         searchView = rootView.findViewById(R.id.search);
         imageView = rootView.findViewById(R.id.ivPlanUsmb);
         canvas = rootView.findViewById(R.id.ivCanvas);
+        canvasBatiment = rootView.findViewById(R.id.ivCanvasBat);
+        list = rootView.findViewById(R.id.lvSearch);
+        list.setVisibility(View.INVISIBLE);
+
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageView.setVisibility(View.INVISIBLE);
-                canvas.setVisibility(View.INVISIBLE);
-                list.setVisibility(View.VISIBLE);
+                swapSearchVisibility(true);
             }
         });
         // Detect SearchView close
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                imageView.setVisibility(View.VISIBLE);
-                canvas.setVisibility(View.VISIBLE);
-                list.setVisibility(View.INVISIBLE);
+                swapSearchVisibility(false);
                 return false;
             }
         });
         searchView.setOnQueryTextListener(this);
+        searchView.setIconifiedByDefault(true);
+
+
 
         return rootView;
     }
@@ -206,7 +218,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (location != null) {
-            drawCanvas();
+            drawCanvasUser();
             Log.d("d", "LOCATION IS : " + location.getLatitude() + ", " + location.getLongitude());
         }
 
@@ -243,7 +255,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     public void onLocationChanged(Location location) {
         if (location != null) {
             this.location = location;
-            drawCanvas();
+            drawCanvasUser();
             Log.d("d", "LOCATION CHANGED TO : " + location.getLatitude() + ", " + location.getLongitude());
         }
     }
@@ -282,9 +294,9 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         }
     }
 
-    private void drawCanvas(){
+    private void drawCanvasUser(){
         // On crée le canvas qui sera par-dessus le plan
-        View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(location.getLatitude(), location.getLongitude()));
+        View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(location.getLatitude(), location.getLongitude()), "colorUser");
         //View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(45.640866, 5.869415));
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888); //width, height,..
         Canvas canvas = new Canvas(bitmap);
@@ -295,11 +307,72 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         iv.setImageBitmap(bitmap);
     }
 
+    private void drawCanvasBatiment(Batiment batiment){
+        // On crée le canvas du bâtiment qui sera par-dessus le plan
+        View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(batiment.getLatitude(), batiment.getLongitude()), "colorBatiment");
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888); //width, height,..
+        Canvas canvas = new Canvas(bitmap);
+        v.draw(canvas);
+
+        // On affiche notre canvas
+        ImageView iv = (ImageView) getView().findViewById(R.id.ivCanvasBat);
+        iv.setImageBitmap(bitmap);
+    }
+
+    private void getBatimentsFromJson(){
+        String url = "http://x-wing-cardcreator.com/others/itineris-data.json";
+        ArrayList<Batiment> b = new ArrayList<>();
+
+        queue = Volley.newRequestQueue(getContext());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONArray batiments = null;
+                try {
+                    batiments = response.getJSONArray("batiments");
+                    for (int i = 0; i < batiments.length(); i++) {
+                        JSONObject batiment = batiments.getJSONObject(i);
+                        JSONArray coordonnees = batiment.getJSONArray("coordonnees");
+                        Log.d("d", "Réception du batiment " + batiment.getString("nom") + " " + batiment.getString("code") + " - " + coordonnees.getDouble(0) + coordonnees.getDouble(1));
+                        // On crée des batiments à partir des données du json et on les ajoute dans l'arraylist à retourner
+                        b.add(new Batiment(batiment.getString("code"), coordonnees.getDouble(0), coordonnees.getDouble(1)));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                arraylist.addAll(b);
+
+                // Pass results to ListViewAdapter Class
+                adapter = new ListViewAdapter(getContext(), arraylist, searchView);
+
+                // Binds the Adapter to the ListView
+                list.setAdapter(adapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.append(error.getMessage());
+            }
+        });
+
+        queue.add(jsonObjectRequest);
+    }
+
     @Override
     public boolean onQueryTextSubmit(String s) {
         Log.d("d", "Query text submit : " + s);
-        // Afficher un point sur le batiment sélectionné TODO: faire un getBatiment(String s) dans class Batiment + gérer le click sur un item
-        return false;
+        // Afficher un point sur le batiment sélectionné
+        for (Batiment batiment : arraylist){
+            Log.d("d", "b.getNom().toLowerCase() : " + batiment.getNom().toLowerCase() + " et s tolowercase : " + s.toLowerCase());
+            if (batiment.getNom().toLowerCase().equals(s.toLowerCase())) {
+                drawCanvasBatiment(batiment);
+                break;
+            }
+        }
+        swapSearchVisibility(false);
+        return true;
     }
 
     @Override
@@ -307,5 +380,20 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         Log.d("d", "Query text change (then filter) : " + s);
         adapter.filter(s);
         return false;
+    }
+
+    private void swapSearchVisibility(boolean visibility) {
+        if (visibility){
+            imageView.setVisibility(View.INVISIBLE);
+            canvas.setVisibility(View.INVISIBLE);
+            canvasBatiment.setVisibility(View.INVISIBLE);
+            list.setVisibility(View.VISIBLE);
+        }else{
+            imageView.setVisibility(View.VISIBLE);
+            canvas.setVisibility(View.VISIBLE);
+            canvasBatiment.setVisibility(View.VISIBLE);
+            list.setVisibility(View.INVISIBLE);
+            searchView.clearFocus();
+        }
     }
 }

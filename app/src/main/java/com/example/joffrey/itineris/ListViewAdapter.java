@@ -1,6 +1,8 @@
 package com.example.joffrey.itineris;
 
 import android.content.Context;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +18,15 @@ public class ListViewAdapter extends BaseAdapter {
     LayoutInflater inflater;
     private List<Batiment> batimentsNomsList = null;
     private ArrayList<Batiment> arraylistComplet;
+    private SearchView sv;
 
-    public ListViewAdapter(Context context, List<Batiment> batimentsNomsList) {
+    public ListViewAdapter(Context context, List<Batiment> batimentsNomsList, SearchView sv) {
         mContext = context;
         this.batimentsNomsList = batimentsNomsList;
         inflater = LayoutInflater.from(mContext);
         this.arraylistComplet = new ArrayList<Batiment>();
         this.arraylistComplet.addAll(batimentsNomsList);
+        this.sv = sv;
     }
 
     public class ViewHolder {
@@ -56,6 +60,13 @@ public class ListViewAdapter extends BaseAdapter {
         }
         // Set the results into TextViews
         holder.name.setText(batimentsNomsList.get(position).getNom());
+        // listview item click
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sv.setQuery(batimentsNomsList.get(position).getNom(), true);
+            }
+        });
         return view;
     }
 

@@ -6,18 +6,21 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 
 public class PositionCanvas extends View {
-    Canvas canvas;
-    Point2D point;
+    private Canvas canvas;
+    private Point2D point;
+    private String colorType;
     private Point2D P_HG = new Point2D(45.644771, 5.868455);
     private Point2D P_BD = new Point2D(45.639447, 5.875998);
     private Point2D P_MAX = new Point2D(500,500);
 
-    public PositionCanvas(Context context, Point2D point) {
+    public PositionCanvas(Context context, Point2D point, String colorType) {
         super(context);
         this.point = point;
+        this.colorType = colorType;
     }
 
     @Override
@@ -29,9 +32,9 @@ public class PositionCanvas extends View {
         // Dessine le point de la position actuelle
         Paint paint = new Paint();
 
-        // On récupère la couleur choisie dans les paramètres
+        // On récupère la couleur choisie dans les paramètres en fonction de si c'est l'utilisateur ou un bâtiment
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        switch (sharedPrefs.getString("color", "RED")){
+        switch (sharedPrefs.getString(colorType, "RED")){
             case "RED":
                 paint.setColor(Color.RED);
                 break;

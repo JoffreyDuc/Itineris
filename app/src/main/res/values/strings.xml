@@ -8,7 +8,8 @@
 
     <!-- Fragment Plan -->
     <string name="ivPlanDescription">Plan du campus de l\'usmb</string>
-    <string name="ivCanvasDescription">Canvas de la taille du plan du campus qui contiendra le point de localisation de l\'utilisateur</string>
+    <string name="ivCanvasDescription">Canvas qui contient le point de localisation de l\'utilisateur</string>
+    <string name="ivCanvasBatDescription">Canvas qui contient le point de localisation d\'un bâtiment</string>
 
     <!-- Fragment Navigation -->
     <string name="plane_finding">Searching for surfaces&#8230;</string>
