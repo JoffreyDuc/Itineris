@@ -9,4 +9,7 @@
     <color name="batimentsDistance">#fff</color>
         <!-- Bâtiment 12A -->
         <color name="batiment12a_background">#09bfe8</color>
+
+    <!-- MapFragment -->
+    <color name="btnClearTextColor">#fff</color>
 </resources>

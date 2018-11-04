@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -38,10 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 // Inspired by https://medium.com/@ssaurel/getting-gps-location-on-android-with-fused-location-provider-api-1001eb549089
 
@@ -53,9 +51,10 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     private LocationRequest locationRequest;
     private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
     private ImageView imageView;
-    private View canvas;
-    private View canvasBatiment;
+    private ImageView canvas;
+    private ImageView canvasBatiment;
     private RequestQueue queue;
+    private Button btnClearCanvasBatiment;
     // lists for permissions
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
@@ -117,6 +116,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         imageView = rootView.findViewById(R.id.ivPlanUsmb);
         canvas = rootView.findViewById(R.id.ivCanvas);
         canvasBatiment = rootView.findViewById(R.id.ivCanvasBat);
+        btnClearCanvasBatiment = rootView.findViewById(R.id.btnClearCanvasBatiment);
         list = rootView.findViewById(R.id.lvSearch);
         list.setVisibility(View.INVISIBLE);
 
@@ -137,7 +137,16 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         searchView.setOnQueryTextListener(this);
         searchView.setIconifiedByDefault(true);
 
-
+        btnClearCanvasBatiment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(0,0), "colorBatiment");
+                Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888); //width, height,..
+                Canvas canvas = new Canvas(bitmap);
+                v.draw(canvas);
+                canvasBatiment.setImageBitmap(bitmap);
+            }
+        });
 
         return rootView;
     }
@@ -303,8 +312,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         v.draw(canvas);
 
         // On affiche notre canvas
-        ImageView iv = (ImageView) getView().findViewById(R.id.ivCanvas);
-        iv.setImageBitmap(bitmap);
+        this.canvas.setImageBitmap(bitmap);
     }
 
     private void drawCanvasBatiment(Batiment batiment){
@@ -315,8 +323,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         v.draw(canvas);
 
         // On affiche notre canvas
-        ImageView iv = (ImageView) getView().findViewById(R.id.ivCanvasBat);
-        iv.setImageBitmap(bitmap);
+        this.canvasBatiment.setImageBitmap(bitmap);
     }
 
     private void getBatimentsFromJson(){
@@ -396,4 +403,5 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
             searchView.clearFocus();
         }
     }
+
 }

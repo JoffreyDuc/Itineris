@@ -53,6 +53,18 @@
             android:layout_alignEnd="@id/ivPlanUsmb"
             android:contentDescription="@string/ivCanvasBatDescription" />
 
+        <Button
+            android:id="@+id/btnClearCanvasBatiment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btnClearText"
+            android:layout_below="@+id/ivPlanUsmb"
+            android:background="@drawable/button"
+            android:textColor="@color/btnClearTextColor"
+            android:layout_alignEnd="@+id/ivPlanUsmb"
+            android:layout_marginTop="-20dp"
+            android:layout_marginRight="20dp"/>
+
     </RelativeLayout>
 
 </FrameLayout>

@@ -14,4 +14,5 @@
     <!-- Fragment Navigation -->
     <string name="plane_finding">Searching for surfaces&#8230;</string>
     <string name="batiment12a_nom">Bâtiment 12A - Maurienne</string>
+    <string name="btnClearText">Effacer le canvas</string>
 </resources>
