@@ -6,8 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
+
+import com.example.joffrey.itineris.utils.Point2D;
 
 public class PositionCanvas extends View {
     private Canvas canvas;

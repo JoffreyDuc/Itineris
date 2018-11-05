@@ -1,4 +1,6 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.utils;
+
+import java.util.ArrayList;
 
 public class Point2D {
 
@@ -13,6 +15,21 @@ public class Point2D {
     public Point2D(Point2D p) {
         this.x = p.x;
         this.y = p.y;
+    }
+
+    // Charge les points depuis le json
+    public static ArrayList<Point2D> initializePointsGPS(String url) {
+        ArrayList<Point2D> pointsGPS = new ArrayList<>();
+
+
+        return pointsGPS;
+    }
+
+    public static ArrayList<int[]> initializePointsLinksGPS(String json_points_url) {
+        ArrayList<int[]> pointsGPSlinks = new ArrayList<>();
+
+
+        return pointsGPSlinks;
     }
 
     public double getX() {

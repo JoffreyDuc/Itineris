@@ -28,6 +28,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.joffrey.itineris.dijkstra.Graph;
+import com.example.joffrey.itineris.utils.Point2D;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -44,6 +46,8 @@ import java.util.ArrayList;
 // Inspired by https://medium.com/@ssaurel/getting-gps-location-on-android-with-fused-location-provider-api-1001eb549089
 
 public class MapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, SearchView.OnQueryTextListener {
+
+    private final String JSON_POINTS_URL = "http://x-wing-cardcreator.com/others/itineris-data.json";
 
     private Location location;
     private GoogleApiClient googleApiClient;
@@ -66,6 +70,10 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     private ListViewAdapter adapter;
     private SearchView searchView;
     private ArrayList<Batiment> arraylist = new ArrayList<>();
+    // Points pour le graphe
+    ArrayList<Point2D> pointsGPS;
+    ArrayList<int[]> pointsGPSlinks;
+    Graph graph;
 
 
     public static MapFragment newInstance() {
@@ -80,6 +88,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -147,6 +156,11 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 canvasBatiment.setImageBitmap(bitmap);
             }
         });
+
+        // Initialisation points et graph
+        pointsGPS = Point2D.initializePointsGPS(JSON_POINTS_URL);
+        pointsGPSlinks = Point2D.initializePointsLinksGPS(JSON_POINTS_URL);
+        graph = Graph.initialize(pointsGPS, pointsGPSlinks);
 
         return rootView;
     }
