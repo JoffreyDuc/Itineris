@@ -1,5 +1,7 @@
 package com.example.joffrey.itineris.dijkstra;
 
+import android.location.Location;
+
 import com.example.joffrey.itineris.utils.Point2D;
 
 import java.util.ArrayList;
@@ -60,7 +62,10 @@ public class Graph {
         for (int[] link : pointsGPSlinks) {
             Point2D p0 = pointsGPS.get(link[0]);
             Point2D p1 = pointsGPS.get(link[1]);
-            double distance = Math.sqrt((p1.getY() - p0.getY()) * (p1.getY() - p0.getY()) + (p1.getX() - p0.getX()) * (p1.getX() - p0.getX()));
+            //double distance = Math.sqrt((p1.getY() - p0.getY()) * (p1.getY() - p0.getY()) + (p1.getX() - p0.getX()) * (p1.getX() - p0.getX()));
+            Location locationA = new Location("locationA"); locationA.setLatitude(p0.getX()); locationA.setLongitude(p0.getY());
+            Location locationB = new Location("locationB"); locationB.setLatitude(p1.getX()); locationB.setLongitude(p1.getY());
+            double distance = locationA.distanceTo(locationB);
             nodes.get(link[0]).addDestination(nodes.get(link[1]) , distance);
             nodes.get(link[1]).addDestination(nodes.get(link[0]) , distance);
         }

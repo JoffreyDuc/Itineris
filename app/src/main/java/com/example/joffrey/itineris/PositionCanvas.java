@@ -57,7 +57,7 @@ public class PositionCanvas extends View {
         Point2D locationOnMap = Point2D.translatePoint2D(point, P_HG, P_BD, P_MAX);
 
         // Et on le dessine
-        canvas.drawCircle((float) locationOnMap.getX(), (float) locationOnMap.getY(), 8, paint);
+        canvas.drawCircle((float) locationOnMap.getX(), (float) locationOnMap.getY(), 5, paint);
     }
 
 }

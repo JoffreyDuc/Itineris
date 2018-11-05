@@ -4,8 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- batiment*_layout.xml -->
-    <dimen name="batimentsNom">22sp</dimen>
-    <dimen name="batimentsPadding">30dp</dimen>
+    <dimen name="batimentsNom">20sp</dimen>
+    <dimen name="batimentsPadding">20dp</dimen>
     <dimen name="batimentsAlpha">0.85</dimen>
-    <dimen name="batimentsDistance">22sp</dimen>
+    <dimen name="batimentsDistance">20sp</dimen>
 </resources>

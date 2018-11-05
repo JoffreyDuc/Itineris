@@ -28,7 +28,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.joffrey.itineris.dijkstra.Dijkstra;
 import com.example.joffrey.itineris.dijkstra.Graph;
+import com.example.joffrey.itineris.dijkstra.Node;
 import com.example.joffrey.itineris.utils.Point2D;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -59,6 +61,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     private ImageView canvasBatiment;
     private RequestQueue queue;
     private Button btnClearCanvasBatiment;
+    private Button btnItineraire;
     // lists for permissions
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
@@ -71,9 +74,10 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     private SearchView searchView;
     private ArrayList<Batiment> arraylist = new ArrayList<>();
     // Points pour le graphe
-    ArrayList<Point2D> pointsGPS;
-    ArrayList<int[]> pointsGPSlinks;
+    ArrayList<Point2D> pointsGPS = new ArrayList<>();
+    ArrayList<int[]> pointsGPSlinks = new ArrayList<>();
     Graph graph;
+    int indexLastBatimentSelected;
 
 
     public static MapFragment newInstance() {
@@ -126,6 +130,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         canvas = rootView.findViewById(R.id.ivCanvas);
         canvasBatiment = rootView.findViewById(R.id.ivCanvasBat);
         btnClearCanvasBatiment = rootView.findViewById(R.id.btnClearCanvasBatiment);
+        btnItineraire = rootView.findViewById(R.id.btnItineraire);
         list = rootView.findViewById(R.id.lvSearch);
         list.setVisibility(View.INVISIBLE);
 
@@ -157,10 +162,14 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
             }
         });
 
-        // Initialisation points et graph
-        pointsGPS = Point2D.initializePointsGPS(JSON_POINTS_URL);
-        pointsGPSlinks = Point2D.initializePointsLinksGPS(JSON_POINTS_URL);
-        graph = Graph.initialize(pointsGPS, pointsGPSlinks);
+        btnItineraire.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                graph = Dijkstra.calculateShortestPathFromSource(graph, getIndexOfClosestPoint());
+                ArrayList<Node> itineraire = Graph.itineraire(graph, indexLastBatimentSelected);
+                drawCanvasItineraire(itineraire);
+            }
+        });
 
         return rootView;
     }
@@ -328,7 +337,6 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         // On affiche notre canvas
         this.canvas.setImageBitmap(bitmap);
     }
-
     private void drawCanvasBatiment(Batiment batiment){
         // On crée le canvas du bâtiment qui sera par-dessus le plan
         View v = new PositionCanvas(getActivity().getApplicationContext(), new Point2D(batiment.getLatitude(), batiment.getLongitude()), "colorBatiment");
@@ -339,37 +347,58 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         // On affiche notre canvas
         this.canvasBatiment.setImageBitmap(bitmap);
     }
+    private void drawCanvasItineraire(ArrayList<Node> arraylistNodes){
+        View v = new ItineraireCanvas(getActivity().getApplicationContext(), arraylistNodes, pointsGPS);
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888); //width, height,..
+        Canvas canvas = new Canvas(bitmap);
+        v.draw(canvas);
+        this.canvasBatiment.setImageBitmap(bitmap);
+    }
 
     private void getBatimentsFromJson(){
-        String url = "http://x-wing-cardcreator.com/others/itineris-data.json";
-        ArrayList<Batiment> b = new ArrayList<>();
 
         queue = Volley.newRequestQueue(getContext());
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                url, new Response.Listener<JSONObject>() {
+                JSON_POINTS_URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                JSONArray batiments = null;
+                JSONArray jaBatiments = null;
+                JSONArray jaNodesGPS = null;
+                JSONArray jaLinksGPS = null;
                 try {
-                    batiments = response.getJSONArray("batiments");
-                    for (int i = 0; i < batiments.length(); i++) {
-                        JSONObject batiment = batiments.getJSONObject(i);
+                    /* Récupération des bâtiments */
+                    jaBatiments = response.getJSONArray("batiments");
+                    for (int i = 0; i < jaBatiments.length(); i++) {
+                        JSONObject batiment = jaBatiments.getJSONObject(i);
                         JSONArray coordonnees = batiment.getJSONArray("coordonnees");
-                        Log.d("d", "Réception du batiment " + batiment.getString("nom") + " " + batiment.getString("code") + " - " + coordonnees.getDouble(0) + coordonnees.getDouble(1));
-                        // On crée des batiments à partir des données du json et on les ajoute dans l'arraylist à retourner
-                        b.add(new Batiment(batiment.getString("code"), coordonnees.getDouble(0), coordonnees.getDouble(1)));
+                        arraylist.add(new Batiment(batiment.getString("code"), coordonnees.getDouble(0), coordonnees.getDouble(1)));
+                    }
+                    /* Récupération des noeuds */
+                    jaNodesGPS = response.getJSONArray("points");
+                    for (int i = 0; i < jaNodesGPS.length(); i++){
+                        JSONObject node = jaNodesGPS.getJSONObject(i);
+                        JSONArray coordonnees = node.getJSONArray("coordonnees");
+                        pointsGPS.add(new Point2D(coordonnees.getDouble(0), coordonnees.getDouble(1)));
+                    }
+                    /* Récupération des liens */
+                    jaLinksGPS = response.getJSONArray("liens");
+                    for (int i = 0; i < jaLinksGPS.length(); i++){
+                        JSONArray coordonnees = (JSONArray) jaLinksGPS.get(i);
+                        pointsGPSlinks.add(new int[]{coordonnees.getInt(0),coordonnees.getInt(1)});
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                arraylist.addAll(b);
 
                 // Pass results to ListViewAdapter Class
                 adapter = new ListViewAdapter(getContext(), arraylist, searchView);
-
                 // Binds the Adapter to the ListView
                 list.setAdapter(adapter);
+
+                // Initialisation du graphe
+                graph = Graph.initialize(pointsGPS, pointsGPSlinks);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -383,12 +412,15 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-        Log.d("d", "Query text submit : " + s);
         // Afficher un point sur le batiment sélectionné
         for (Batiment batiment : arraylist){
-            Log.d("d", "b.getNom().toLowerCase() : " + batiment.getNom().toLowerCase() + " et s tolowercase : " + s.toLowerCase());
             if (batiment.getNom().toLowerCase().equals(s.toLowerCase())) {
                 drawCanvasBatiment(batiment);
+                for (int i = 0; i < pointsGPS.size(); i++){
+                    if (pointsGPS.get(i).getX() == batiment.getLatitude() && pointsGPS.get(i).getY() == batiment.getLongitude()){
+                        indexLastBatimentSelected = i;
+                    }
+                }
                 break;
             }
         }
@@ -398,7 +430,6 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
 
     @Override
     public boolean onQueryTextChange(String s) {
-        Log.d("d", "Query text change (then filter) : " + s);
         adapter.filter(s);
         return false;
     }
@@ -420,4 +451,17 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         }
     }
 
+    private int getIndexOfClosestPoint(){
+        double distanceMin = Double.MAX_VALUE;
+        int indexOfClosestPoint = -1;
+        for(int i = 0; i < pointsGPS.size(); i++){
+            Location locationPoint = new Location("point"); locationPoint.setLatitude(pointsGPS.get(i).getX()); locationPoint.setLongitude(pointsGPS.get(i).getY());
+            double distance = location.distanceTo(locationPoint);
+            if (distance < distanceMin) {
+                distanceMin = distance;
+                indexOfClosestPoint = i;
+            }
+        }
+        return indexOfClosestPoint;
+    }
 }

@@ -11,6 +11,7 @@
     <string name="ivCanvasDescription">Canvas qui contient le point de localisation de l\'utilisateur</string>
     <string name="ivCanvasBatDescription">Canvas qui contient le point de localisation d\'un bâtiment</string>
     <string name="btnClearText">Effacer le canvas</string>
+    <string name="btnItineraireText">Itinéraire</string>
 
     <!-- Fragment Navigation -->
     <string name="plane_finding">Searching for surfaces&#8230;</string>
