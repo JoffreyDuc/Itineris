@@ -1,4 +1,4 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.SearchView;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.example.joffrey.itineris.R;
+import com.example.joffrey.itineris.utils.Batiment;
 
 import java.util.ArrayList;
 import java.util.List;

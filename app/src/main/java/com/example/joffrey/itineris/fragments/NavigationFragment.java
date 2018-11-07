@@ -1,4 +1,4 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.joffrey.itineris.utils.NavigationUtils;
+import com.example.joffrey.itineris.R;
 import com.google.ar.core.Frame;
 import com.google.ar.core.Plane;
 import com.google.ar.core.Session;

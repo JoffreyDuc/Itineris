@@ -1,4 +1,4 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.utils;
 
 import android.app.Activity;
 import android.content.Context;

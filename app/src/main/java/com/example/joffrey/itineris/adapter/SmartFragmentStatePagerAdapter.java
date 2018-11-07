@@ -1,4 +1,4 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

@@ -1,4 +1,4 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -28,10 +28,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.joffrey.itineris.canvas.ItineraireCanvas;
+import com.example.joffrey.itineris.adapter.ListViewAdapter;
+import com.example.joffrey.itineris.canvas.PositionCanvas;
+import com.example.joffrey.itineris.R;
 import com.example.joffrey.itineris.dijkstra.Dijkstra;
 import com.example.joffrey.itineris.dijkstra.Graph;
 import com.example.joffrey.itineris.dijkstra.Node;
+import com.example.joffrey.itineris.utils.Batiment;
 import com.example.joffrey.itineris.utils.Point2D;
+import com.example.joffrey.itineris.utils.VolleySingleton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;

@@ -1,7 +1,9 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.fragments;
 
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceFragmentCompat;
+
+import com.example.joffrey.itineris.R;
 
 
 public class SettingsFragment extends PreferenceFragmentCompat {

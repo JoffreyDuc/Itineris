@@ -1,4 +1,4 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.utils;
 
 import android.os.AsyncTask;
 import android.util.Log;

@@ -9,6 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.example.joffrey.itineris.adapter.BottomBarAdapter;
+import com.example.joffrey.itineris.fragments.MapFragment;
+import com.example.joffrey.itineris.fragments.NavigationFragment;
+import com.example.joffrey.itineris.fragments.SettingsFragment;
+
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager viewPager;

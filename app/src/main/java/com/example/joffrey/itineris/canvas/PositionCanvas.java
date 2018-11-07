@@ -1,4 +1,4 @@
-package com.example.joffrey.itineris;
+package com.example.joffrey.itineris.canvas;
 
 import android.content.Context;
 import android.content.SharedPreferences;
