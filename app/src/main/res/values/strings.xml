@@ -7,6 +7,7 @@
     <string name="title_settings">Paramètres</string>
 
     <!-- Fragment Plan -->
+    <string name="searchViewHint">Rechercher un bâtiment</string>
     <string name="ivPlanDescription">Plan du campus de l\'usmb</string>
     <string name="ivCanvasDescription">Canvas qui contient le point de localisation de l\'utilisateur</string>
     <string name="ivCanvasBatDescription">Canvas qui contient le point de localisation d\'un bâtiment</string>
@@ -18,4 +19,5 @@
     <string name="batiment12a_nom">Bâtiment 12A - Maurienne</string>
     <string name="batiment12b_nom">Bâtiment 12B - Maurienne</string>
     <string name="batiment4c_nom">Bâtiment 4C - Entremonts</string>
+
 </resources>

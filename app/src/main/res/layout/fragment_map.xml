@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            app:defaultQueryHint="Rechercher un bâtiment">
+            app:defaultQueryHint="@string/searchViewHint">
         </android.support.v7.widget.SearchView>
 
         <ListView

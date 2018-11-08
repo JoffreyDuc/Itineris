@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-
     <string-array name="colorUser">
         <item name="red">Rouge</item>
         <item name="blue">Bleu</item>
         <item name="yellow">Jaune</item>
         <item name="green">Vert</item>
+    </string-array>
+    <string-array name="colorUserValues">
+        <item name="red">RED</item>
+        <item name="blue">BLUE</item>
+        <item name="yellow">YELLOW</item>
+        <item name="green">GREEN</item>
     </string-array>
     <string-array name="colorBatiment">
         <item name="red">Rouge</item>
@@ -15,12 +19,7 @@
         <item name="green">Vert</item>
     </string-array>
 
-    <string-array name="colorUserValues">
-        <item name="red">RED</item>
-        <item name="blue">BLUE</item>
-        <item name="yellow">YELLOW</item>
-        <item name="green">GREEN</item>
-    </string-array>
+
     <string-array name="colorBatimentValues">
         <item name="red">RED</item>
         <item name="blue">BLUE</item>
